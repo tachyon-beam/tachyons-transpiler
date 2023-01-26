@@ -15,6 +15,7 @@ const modules = {
     'styles',
     'debug_children',
     'module_template',
+    'nested',
     'normalize'
   ],
   static: [
@@ -22,6 +23,12 @@ const modules = {
     'debug-children',
     'debug-grid',
     'images'
+  ],
+  colors: [
+    'skins',
+    'skins-pseudo',
+    'border-colors',
+    'gradients',
   ]
 }
 
@@ -37,7 +44,7 @@ const variables = JSON.parse(
                       .replace(/^./g, '{"')
                   )
 // helpers
-const modulePaths = (files, prefix = '') => files.map(filename => `${prefix}src/_${filename}.scss`)
+const modulePaths = (path, files, prefix = '') => files.map(filename => `${prefix}${path}/_${filename}.scss`)
 const placeholder = () => replace(/^\./gm, '%')
 const suffixer = () => replace(/(^[\.%][^:\s,]+)/gm, '$1#{$s}')
 
@@ -45,9 +52,9 @@ const suffixer = () => replace(/(^[\.%][^:\s,]+)/gm, '$1#{$s}')
 function sanitize() {
   return src([
     'src/*',
-    ...modulePaths(modules.variables, '!'),
-    ...modulePaths(modules.ignore, '!'),
-    ...modulePaths(modules.static, '!')
+    ...modulePaths('src', modules.variables, '!'),
+    ...modulePaths('src', modules.ignore, '!'),
+    ...modulePaths('src', modules.static, '!')
   ]).pipe( replace(/^@.+/gsm, '') )
     .pipe( replace(/^\/\/[^\n]+/gm, '') )
     .pipe( clean({
@@ -62,7 +69,8 @@ function sanitize() {
 
 function hyperbeam() {
   return src([
-    'sanitized/*'
+    'sanitized/*',
+    ...modulePaths('sanitized', modules.colors, '!')
   ]).pipe( concat('tachyons.scss') )
     .pipe( suffixer() )
     .pipe( placeholder() )
