@@ -74,7 +74,7 @@ function hyperbeam() {
       }
       callback(null, replaced)
     }) )
-    .pipe( dest('tachyon-beam-hyperbeam') )
+    .pipe( dest('hyperbeam') )
 }
 
 
